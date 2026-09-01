@@ -1,0 +1,46 @@
+@model LeveInvestimentos.Domain.Entities.Usuario
+@{
+    ViewData["Title"] = "Detalhes do usuário";
+}
+
+<h2>Detalhes do usuário</h2>
+
+<div class="uk-card uk-card-default uk-card-body uk-box-shadow-small">
+    <div uk-grid>
+        <div class="uk-width-auto">
+            @if (!string.IsNullOrEmpty(Model.CaminhoFoto))
+            {
+                <img src="@Model.CaminhoFoto" style="width:96px;height:96px;border-radius:50%;object-fit:cover;" alt="Foto de @Model.NomeCompleto" />
+            }
+            else
+            {
+                <span uk-icon="icon: user; ratio: 3"></span>
+            }
+        </div>
+        <div class="uk-width-expand">
+            <h3 class="uk-margin-remove">@Model.NomeCompleto</h3>
+            <p class="uk-text-meta uk-margin-remove-top">
+                @(Model.IsGestor ? "Gestor" : "Subordinado")
+                @if (Model.Gestor is not null)
+                {
+                    <text> · Gestor responsável: @Model.Gestor.NomeCompleto</text>
+                }
+            </p>
+
+            <dl class="uk-description-list uk-margin-top">
+                <dt>E-mail</dt>
+                <dd>@Model.Email</dd>
+                <dt>Data de nascimento</dt>
+                <dd>@Model.DataNascimento.ToString("dd/MM/yyyy")</dd>
+                <dt>Telefone celular</dt>
+                <dd>@Model.TelefoneCelular</dd>
+                <dt>Telefone fixo</dt>
+                <dd>@(Model.TelefoneFixo ?? "-")</dd>
+                <dt>Endereço</dt>
+                <dd>@Model.Endereco</dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<a class="uk-button uk-button-default uk-margin-top" asp-action="Index">Voltar</a>

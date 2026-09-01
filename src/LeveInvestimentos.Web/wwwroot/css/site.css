@@ -1,0 +1,32 @@
+/* Pequenos ajustes de identidade visual sobre o UIkit padrão. */
+:root {
+  --cor-marca: #1e3a5f;
+}
+
+body {
+  background-color: #f6f8fa;
+}
+
+.uk-navbar-container {
+  background-color: #ffffff;
+}
+
+.uk-logo {
+  font-weight: 700;
+  color: var(--cor-marca) !important;
+}
+
+.uk-card-tarefa-atrasada {
+  border-left: 4px solid #f0506e;
+}
+
+.uk-card-tarefa-concluida {
+  border-left: 4px solid #32d296;
+}
+
+.avatar-usuario {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+}

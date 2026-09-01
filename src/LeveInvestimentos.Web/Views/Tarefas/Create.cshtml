@@ -1,0 +1,55 @@
+@model TarefaCadastroDTO
+@{
+    ViewData["Title"] = "Nova tarefa";
+    var subordinados = (IEnumerable<dynamic>)ViewBag.Subordinados;
+}
+
+<h2>Cadastrar tarefa para subordinado</h2>
+
+@if (!subordinados.Any())
+{
+    <div class="uk-alert-warning" uk-alert>
+        <p>Você ainda não possui subordinados cadastrados. Cadastre um usuário com perfil "Subordinado" antes de atribuir tarefas.</p>
+    </div>
+}
+else
+{
+    <div class="uk-card uk-card-default uk-card-body uk-box-shadow-small">
+        <form asp-controller="Tarefas" asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="uk-alert-danger" uk-alert></div>
+
+            <div class="uk-margin">
+                <label class="uk-form-label" asp-for="UsuarioResponsavelId"></label>
+                <select asp-for="UsuarioResponsavelId" class="uk-select">
+                    <option value="">Selecione o subordinado</option>
+                    @foreach (var subordinado in subordinados)
+                    {
+                        <option value="@subordinado.Id">@subordinado.NomeCompleto</option>
+                    }
+                </select>
+                <span asp-validation-for="UsuarioResponsavelId" class="uk-text-danger uk-text-small"></span>
+            </div>
+
+            <div class="uk-margin">
+                <label class="uk-form-label" asp-for="Mensagem"></label>
+                <textarea asp-for="Mensagem" class="uk-textarea" rows="4"></textarea>
+                <span asp-validation-for="Mensagem" class="uk-text-danger uk-text-small"></span>
+            </div>
+
+            <div class="uk-margin">
+                <label class="uk-form-label" asp-for="DataLimite"></label>
+                <input asp-for="DataLimite" class="uk-input uk-form-width-medium" />
+                <span asp-validation-for="DataLimite" class="uk-text-danger uk-text-small"></span>
+            </div>
+
+            <div class="uk-margin-top">
+                <button type="submit" class="uk-button uk-button-primary">Salvar</button>
+                <a class="uk-button uk-button-default" asp-action="Index">Cancelar</a>
+            </div>
+        </form>
+    </div>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

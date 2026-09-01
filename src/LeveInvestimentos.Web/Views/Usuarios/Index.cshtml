@@ -1,0 +1,79 @@
+@model IEnumerable<LeveInvestimentos.Application.DTOs.UsuarioListaDTO>
+@{
+    ViewData["Title"] = "Usuários";
+}
+
+<div class="uk-flex uk-flex-between uk-flex-middle uk-margin-bottom">
+    <h2 class="uk-margin-remove">Usuários cadastrados</h2>
+    <a class="uk-button uk-button-primary" asp-controller="Usuarios" asp-action="Create">
+        <span uk-icon="icon: plus"></span> Novo usuário
+    </a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="uk-alert-primary" uk-alert><p>Nenhum usuário cadastrado ainda.</p></div>
+}
+else
+{
+    <div class="uk-overflow-auto">
+        <table class="uk-table uk-table-striped uk-table-divider uk-table-middle uk-box-shadow-small">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Nome</th>
+                    <th>E-mail</th>
+                    <th>Celular</th>
+                    <th>Perfil</th>
+                    <th>Gestor</th>
+                    <th>Situação</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var usuario in Model)
+                {
+                    <tr>
+                        <td>
+                            @if (!string.IsNullOrEmpty(usuario.CaminhoFoto))
+                            {
+                                <img src="@usuario.CaminhoFoto" class="avatar-usuario" alt="Foto de @usuario.NomeCompleto" />
+                            }
+                            else
+                            {
+                                <span uk-icon="icon: user; ratio: 1.4"></span>
+                            }
+                        </td>
+                        <td>@usuario.NomeCompleto</td>
+                        <td>@usuario.Email</td>
+                        <td>@usuario.TelefoneCelular</td>
+                        <td>
+                            @if (usuario.Perfil == LeveInvestimentos.Domain.Enums.PerfilUsuario.Gestor)
+                            {
+                                <span class="uk-label">Gestor</span>
+                            }
+                            else
+                            {
+                                <span class="uk-label uk-label-success">Subordinado</span>
+                            }
+                        </td>
+                        <td>@(usuario.NomeGestor ?? "-")</td>
+                        <td>
+                            @if (usuario.Ativo)
+                            {
+                                <span class="uk-text-success">Ativo</span>
+                            }
+                            else
+                            {
+                                <span class="uk-text-danger">Inativo</span>
+                            }
+                        </td>
+                        <td>
+                            <a class="uk-icon-link" uk-icon="icon: more" asp-action="Details" asp-route-id="@usuario.Id" title="Detalhes"></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

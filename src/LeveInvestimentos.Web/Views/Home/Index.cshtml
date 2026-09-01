@@ -1,0 +1,29 @@
+@using LeveInvestimentos.Web.Authorization
+@{
+    ViewData["Title"] = "Início";
+}
+
+<h2>Bem-vindo(a), @User.FindFirst(ClaimsPersonalizados.NomeCompleto)?.Value</h2>
+<p class="uk-text-meta">
+    Perfil: @(User.FindFirst(ClaimsPersonalizados.Perfil)?.Value == "Gestor" ? "Gestor" : "Subordinado")
+</p>
+
+<div class="uk-grid-match uk-child-width-1-2@s uk-margin-top" uk-grid>
+    <div>
+        <div class="uk-card uk-card-default uk-card-body">
+            <h3 class="uk-card-title"><span uk-icon="icon: calendar"></span> Tarefas</h3>
+            <p>Acompanhe ou execute as tarefas atribuídas.</p>
+            <a class="uk-button uk-button-primary" asp-controller="Tarefas" asp-action="Index">Ver tarefas</a>
+        </div>
+    </div>
+    @if (User.FindFirst(ClaimsPersonalizados.Perfil)?.Value == "Gestor")
+    {
+        <div>
+            <div class="uk-card uk-card-default uk-card-body">
+                <h3 class="uk-card-title"><span uk-icon="icon: users"></span> Usuários</h3>
+                <p>Cadastre novos usuários e gerencie sua equipe.</p>
+                <a class="uk-button uk-button-primary" asp-controller="Usuarios" asp-action="Index">Ver usuários</a>
+            </div>
+        </div>
+    }
+</div>

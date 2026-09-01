@@ -1,0 +1,73 @@
+@model IEnumerable<LeveInvestimentos.Application.DTOs.TarefaListaDTO>
+@{
+    ViewData["Title"] = "Tarefas";
+    bool isGestor = ViewBag.IsGestor;
+}
+
+<div class="uk-flex uk-flex-between uk-flex-middle uk-margin-bottom">
+    <h2 class="uk-margin-remove">@(isGestor ? "Tarefas atribuídas pela equipe" : "Minhas tarefas")</h2>
+    @if (isGestor)
+    {
+        <a class="uk-button uk-button-primary" asp-controller="Tarefas" asp-action="Create">
+            <span uk-icon="icon: plus"></span> Nova tarefa
+        </a>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="uk-alert-primary" uk-alert><p>Nenhuma tarefa encontrada.</p></div>
+}
+else
+{
+    <div class="uk-grid-match uk-child-width-1-2@m uk-child-width-1-3@l" uk-grid>
+        @foreach (var tarefa in Model)
+        {
+            var classeCard = tarefa.Status == LeveInvestimentos.Domain.Enums.StatusTarefa.Concluida
+                ? "uk-card-tarefa-concluida"
+                : (tarefa.Atrasada ? "uk-card-tarefa-atrasada" : "");
+
+            <div>
+                <div class="uk-card uk-card-default uk-card-body uk-box-shadow-small @classeCard">
+                    <p class="uk-margin-remove">@tarefa.Mensagem</p>
+                    <p class="uk-text-meta uk-margin-small-top uk-margin-remove-bottom">
+                        Prazo: @tarefa.DataLimite.ToString("dd/MM/yyyy")
+                    </p>
+
+                    @if (isGestor)
+                    {
+                        <p class="uk-text-meta uk-margin-remove-top">Responsável: @tarefa.UsuarioResponsavelNome</p>
+                    }
+                    else
+                    {
+                        <p class="uk-text-meta uk-margin-remove-top">Atribuída por: @tarefa.UsuarioGestorNome</p>
+                    }
+
+                    <div class="uk-margin-small-top">
+                        @if (tarefa.Status == LeveInvestimentos.Domain.Enums.StatusTarefa.Concluida)
+                        {
+                            <span class="uk-label uk-label-success">Concluída em @tarefa.DataConclusao?.ToString("dd/MM/yyyy")</span>
+                        }
+                        else if (tarefa.Atrasada)
+                        {
+                            <span class="uk-label uk-label-danger">Atrasada</span>
+                        }
+                        else
+                        {
+                            <span class="uk-label">Pendente</span>
+                        }
+                    </div>
+
+                    @if (!isGestor && tarefa.Status != LeveInvestimentos.Domain.Enums.StatusTarefa.Concluida)
+                    {
+                        <form asp-controller="Tarefas" asp-action="Concluir" asp-route-id="@tarefa.Id" method="post" class="uk-margin-small-top">
+                            <button type="submit" class="uk-button uk-button-small uk-button-primary">
+                                Marcar como concluída
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}
