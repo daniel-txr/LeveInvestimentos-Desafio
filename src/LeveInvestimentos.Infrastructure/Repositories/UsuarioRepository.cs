@@ -33,4 +33,22 @@ public class UsuarioRepository : RepositorioBase<Usuario>, IUsuarioRepository
             .Include(u => u.Gestor)
             .OrderBy(u => u.NomeCompleto)
             .ToListAsync();
+
+    public async Task<(IEnumerable<Usuario> Itens, int Total)> ObterPaginadoComGestorAsync(int pagina, int tamanhoPagina)
+    {
+        var consultaBase = DbSet.AsNoTracking();
+
+        // Conta antes de paginar (Skip/Take), sobre a mesma consulta base, sem o Include
+        // (que seria desperdício de JOIN só para contar linhas).
+        var total = await consultaBase.CountAsync();
+
+        var itens = await consultaBase
+            .Include(u => u.Gestor)
+            .OrderBy(u => u.NomeCompleto)
+            .Skip((pagina - 1) * tamanhoPagina)
+            .Take(tamanhoPagina)
+            .ToListAsync();
+
+        return (itens, total);
+    }
 }

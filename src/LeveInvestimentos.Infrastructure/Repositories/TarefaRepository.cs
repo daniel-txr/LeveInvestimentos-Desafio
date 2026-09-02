@@ -28,4 +28,38 @@ public class TarefaRepository : RepositorioBase<Tarefa>, ITarefaRepository
             .Include(t => t.UsuarioResponsavel)
             .Include(t => t.UsuarioGestor)
             .FirstOrDefaultAsync(t => t.Id == tarefaId);
+
+    public async Task<(IEnumerable<Tarefa> Itens, int Total)> ObterPorGestorPaginadoAsync(int gestorId, int pagina, int tamanhoPagina)
+    {
+        var consultaBase = DbSet.AsNoTracking().Where(t => t.UsuarioGestorId == gestorId);
+
+        var total = await consultaBase.CountAsync();
+
+        var itens = await consultaBase
+            .Include(t => t.UsuarioResponsavel)
+            .Include(t => t.UsuarioGestor)
+            .OrderBy(t => t.DataLimite)
+            .Skip((pagina - 1) * tamanhoPagina)
+            .Take(tamanhoPagina)
+            .ToListAsync();
+
+        return (itens, total);
+    }
+
+    public async Task<(IEnumerable<Tarefa> Itens, int Total)> ObterPorResponsavelPaginadoAsync(int usuarioResponsavelId, int pagina, int tamanhoPagina)
+    {
+        var consultaBase = DbSet.AsNoTracking().Where(t => t.UsuarioResponsavelId == usuarioResponsavelId);
+
+        var total = await consultaBase.CountAsync();
+
+        var itens = await consultaBase
+            .Include(t => t.UsuarioResponsavel)
+            .Include(t => t.UsuarioGestor)
+            .OrderBy(t => t.DataLimite)
+            .Skip((pagina - 1) * tamanhoPagina)
+            .Take(tamanhoPagina)
+            .ToListAsync();
+
+        return (itens, total);
+    }
 }

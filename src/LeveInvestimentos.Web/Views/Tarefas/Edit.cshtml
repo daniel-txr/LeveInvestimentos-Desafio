@@ -1,0 +1,48 @@
+@model TarefaEdicaoDTO
+@{
+    ViewData["Title"] = "Editar tarefa";
+    var subordinados = (IEnumerable<dynamic>)ViewBag.Subordinados;
+}
+
+<h2>Editar tarefa</h2>
+
+<div class="uk-card uk-card-default uk-card-body uk-box-shadow-small">
+    <form asp-controller="Tarefas" asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Id" />
+
+        <div asp-validation-summary="ModelOnly" class="uk-alert-danger" uk-alert></div>
+
+        <div class="uk-margin">
+            <label class="uk-form-label" asp-for="UsuarioResponsavelId"></label>
+            <select asp-for="UsuarioResponsavelId" class="uk-select">
+                <option value="">Selecione o subordinado</option>
+                @foreach (var subordinado in subordinados)
+                {
+                    <option value="@subordinado.Id">@subordinado.NomeCompleto</option>
+                }
+            </select>
+            <span asp-validation-for="UsuarioResponsavelId" class="uk-text-danger uk-text-small"></span>
+        </div>
+
+        <div class="uk-margin">
+            <label class="uk-form-label" asp-for="Mensagem"></label>
+            <textarea asp-for="Mensagem" class="uk-textarea" rows="4"></textarea>
+            <span asp-validation-for="Mensagem" class="uk-text-danger uk-text-small"></span>
+        </div>
+
+        <div class="uk-margin">
+            <label class="uk-form-label" asp-for="DataLimite"></label>
+            <input asp-for="DataLimite" class="uk-input uk-form-width-medium" />
+            <span asp-validation-for="DataLimite" class="uk-text-danger uk-text-small"></span>
+        </div>
+
+        <div class="uk-margin-top">
+            <button type="submit" class="uk-button uk-button-primary">Salvar alterações</button>
+            <a class="uk-button uk-button-default" asp-action="Index">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

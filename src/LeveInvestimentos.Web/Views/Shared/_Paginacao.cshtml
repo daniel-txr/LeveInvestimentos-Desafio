@@ -1,0 +1,56 @@
+@*
+    Partial de paginação genérica e reutilizável em qualquer listagem da aplicação.
+    Espera duas chaves em ViewData: "PaginaAtual" e "TotalPaginas".
+    Gera os links para a MESMA action/controller da página atual, variando só ?pagina=.
+*@
+@{
+    var paginaAtual = (int)(ViewData["PaginaAtual"] ?? 1);
+    var totalPaginas = (int)(ViewData["TotalPaginas"] ?? 1);
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+}
+
+@if (totalPaginas > 1)
+{
+    <ul class="uk-pagination uk-flex-center uk-margin-top">
+        <li class="@(paginaAtual <= 1 ? "uk-disabled" : "")">
+            @if (paginaAtual > 1)
+            {
+                <a asp-controller="@controller" asp-action="@action" asp-route-pagina="@(paginaAtual - 1)">
+                    <span uk-icon="icon: chevron-left"></span> Anterior
+                </a>
+            }
+            else
+            {
+                <span><span uk-icon="icon: chevron-left"></span> Anterior</span>
+            }
+        </li>
+
+        @for (var p = 1; p <= totalPaginas; p++)
+        {
+            <li class="@(p == paginaAtual ? "uk-active" : "")">
+                @if (p == paginaAtual)
+                {
+                    <span>@p</span>
+                }
+                else
+                {
+                    <a asp-controller="@controller" asp-action="@action" asp-route-pagina="@p">@p</a>
+                }
+            </li>
+        }
+
+        <li class="uk-margin-auto-left @(paginaAtual >= totalPaginas ? "uk-disabled" : "")">
+            @if (paginaAtual < totalPaginas)
+            {
+                <a asp-controller="@controller" asp-action="@action" asp-route-pagina="@(paginaAtual + 1)">
+                    Próxima <span uk-icon="icon: chevron-right"></span>
+                </a>
+            }
+            else
+            {
+                <span>Próxima <span uk-icon="icon: chevron-right"></span></span>
+            }
+        </li>
+    </ul>
+}

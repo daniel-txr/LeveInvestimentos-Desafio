@@ -1,4 +1,4 @@
-@model IEnumerable<LeveInvestimentos.Application.DTOs.TarefaListaDTO>
+@model LeveInvestimentos.Application.DTOs.PaginacaoResultado<LeveInvestimentos.Application.DTOs.TarefaListaDTO>
 @{
     ViewData["Title"] = "Tarefas";
     bool isGestor = ViewBag.IsGestor;
@@ -14,18 +14,17 @@
     }
 </div>
 
-@if (!Model.Any())
+@if (!Model.Itens.Any())
 {
     <div class="uk-alert-primary" uk-alert><p>Nenhuma tarefa encontrada.</p></div>
 }
 else
 {
     <div class="uk-grid-match uk-child-width-1-2@m uk-child-width-1-3@l" uk-grid>
-        @foreach (var tarefa in Model)
+        @foreach (var tarefa in Model.Itens)
         {
-            var classeCard = tarefa.Status == LeveInvestimentos.Domain.Enums.StatusTarefa.Concluida
-                ? "uk-card-tarefa-concluida"
-                : (tarefa.Atrasada ? "uk-card-tarefa-atrasada" : "");
+            var concluida = tarefa.Status == LeveInvestimentos.Domain.Enums.StatusTarefa.Concluida;
+            var classeCard = concluida ? "uk-card-tarefa-concluida" : (tarefa.Atrasada ? "uk-card-tarefa-atrasada" : "");
 
             <div>
                 <div class="uk-card uk-card-default uk-card-body uk-box-shadow-small @classeCard">
@@ -44,7 +43,7 @@ else
                     }
 
                     <div class="uk-margin-small-top">
-                        @if (tarefa.Status == LeveInvestimentos.Domain.Enums.StatusTarefa.Concluida)
+                        @if (concluida)
                         {
                             <span class="uk-label uk-label-success">Concluída em @tarefa.DataConclusao?.ToString("dd/MM/yyyy")</span>
                         }
@@ -58,16 +57,39 @@ else
                         }
                     </div>
 
-                    @if (!isGestor && tarefa.Status != LeveInvestimentos.Domain.Enums.StatusTarefa.Concluida)
+                    @if (!isGestor && !concluida)
                     {
-                        <form asp-controller="Tarefas" asp-action="Concluir" asp-route-id="@tarefa.Id" method="post" class="uk-margin-small-top">
+                        <form asp-controller="Tarefas" asp-action="Concluir" asp-route-id="@tarefa.Id" asp-route-pagina="@Model.PaginaAtual" method="post" class="uk-margin-small-top">
                             <button type="submit" class="uk-button uk-button-small uk-button-primary">
                                 Marcar como concluída
                             </button>
                         </form>
                     }
+
+                    @if (isGestor)
+                    {
+                        <div class="uk-margin-small-top">
+                            @if (!concluida)
+                            {
+                                <a class="uk-icon-link uk-margin-small-right" uk-icon="icon: pencil" asp-action="Edit" asp-route-id="@tarefa.Id" title="Editar"></a>
+                            }
+                            <form asp-controller="Tarefas" asp-action="Excluir" asp-route-id="@tarefa.Id" asp-route-pagina="@Model.PaginaAtual" method="post" class="uk-display-inline">
+                                <button type="submit" class="uk-icon-link uk-text-danger" uk-icon="icon: trash" title="Excluir"
+                                        onclick="return confirm('Excluir esta tarefa? Essa ação não pode ser desfeita.');"></button>
+                            </form>
+                        </div>
+                    }
                 </div>
             </div>
         }
     </div>
+
+    <p class="uk-text-meta uk-text-center uk-margin-top">
+        Mostrando @Model.Itens.Count() de @Model.TotalRegistros tarefa(s) — página @Model.PaginaAtual de @Model.TotalPaginas
+    </p>
+
+    ViewData["PaginaAtual"] = Model.PaginaAtual;
+    ViewData["TotalPaginas"] = Model.TotalPaginas;
+
+    <partial name="_Paginacao" />
 }

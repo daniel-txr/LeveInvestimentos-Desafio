@@ -18,3 +18,4 @@ src/LeveInvestimentos.Web/wwwroot/uploads/usuarios/*
 
 ## Logs
 *.log
+src/LeveInvestimentos.Web/Logs/

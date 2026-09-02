@@ -1,0 +1,107 @@
+@model UsuarioEdicaoViewModel
+@{
+    ViewData["Title"] = "Editar usuário";
+    var gestores = (IEnumerable<dynamic>)ViewBag.Gestores;
+}
+
+<h2>Editar usuário</h2>
+
+<div class="uk-card uk-card-default uk-card-body uk-box-shadow-small">
+    <form asp-controller="Usuarios" asp-action="Edit" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="CaminhoFotoAtual" />
+
+        <div asp-validation-summary="ModelOnly" class="uk-alert-danger" uk-alert></div>
+
+        <div uk-grid>
+            <div class="uk-width-1-2@s">
+                <label class="uk-form-label" asp-for="NomeCompleto"></label>
+                <input asp-for="NomeCompleto" class="uk-input" />
+                <span asp-validation-for="NomeCompleto" class="uk-text-danger uk-text-small"></span>
+            </div>
+            <div class="uk-width-1-2@s">
+                <label class="uk-form-label" asp-for="DataNascimento"></label>
+                <input asp-for="DataNascimento" class="uk-input" />
+                <span asp-validation-for="DataNascimento" class="uk-text-danger uk-text-small"></span>
+            </div>
+
+            <div class="uk-width-1-2@s">
+                <label class="uk-form-label" asp-for="TelefoneFixo"></label>
+                <input asp-for="TelefoneFixo" class="uk-input" placeholder="(11) 3333-4444" />
+                <span asp-validation-for="TelefoneFixo" class="uk-text-danger uk-text-small"></span>
+            </div>
+            <div class="uk-width-1-2@s">
+                <label class="uk-form-label" asp-for="TelefoneCelular"></label>
+                <input asp-for="TelefoneCelular" class="uk-input" placeholder="(11) 99999-8888" />
+                <span asp-validation-for="TelefoneCelular" class="uk-text-danger uk-text-small"></span>
+            </div>
+
+            <div class="uk-width-1-2@s">
+                <label class="uk-form-label" asp-for="Email"></label>
+                <input asp-for="Email" class="uk-input" autocomplete="off" />
+                <span asp-validation-for="Email" class="uk-text-danger uk-text-small"></span>
+            </div>
+            <div class="uk-width-1-2@s">
+                <label class="uk-form-label" asp-for="Perfil"></label>
+                <select asp-for="Perfil" asp-items="Html.GetEnumSelectList<PerfilUsuario>()" id="perfilSelect" class="uk-select"></select>
+                <span asp-validation-for="Perfil" class="uk-text-danger uk-text-small"></span>
+            </div>
+
+            <div class="uk-width-1-1" id="campoGestor">
+                <label class="uk-form-label" asp-for="GestorId"></label>
+                <select asp-for="GestorId" class="uk-select">
+                    <option value="">Selecione o gestor responsável</option>
+                    @foreach (var gestor in gestores)
+                    {
+                        <option value="@gestor.Id">@gestor.NomeCompleto</option>
+                    }
+                </select>
+                <span asp-validation-for="GestorId" class="uk-text-danger uk-text-small"></span>
+                <p class="uk-text-meta">Só é exigido quando o perfil é "Subordinado". Trocar o gestor aqui reatribui a subordinação imediatamente.</p>
+            </div>
+
+            <div class="uk-width-1-1">
+                <label class="uk-form-label" asp-for="Endereco"></label>
+                <input asp-for="Endereco" class="uk-input" />
+                <span asp-validation-for="Endereco" class="uk-text-danger uk-text-small"></span>
+            </div>
+
+            <div class="uk-width-1-1">
+                <label class="uk-form-label" asp-for="Foto"></label>
+                @if (!string.IsNullOrEmpty(Model.CaminhoFotoAtual))
+                {
+                    <div class="uk-margin-small-bottom">
+                        <img src="@Model.CaminhoFotoAtual" class="avatar-usuario" style="width:64px;height:64px;" alt="Foto atual" />
+                        <span class="uk-text-meta">Foto atual — envie uma nova abaixo para substituí-la.</span>
+                    </div>
+                }
+                <div uk-form-custom="target: true">
+                    <input asp-for="Foto" type="file" accept="image/*" />
+                    <input class="uk-input uk-form-width-large" type="text" placeholder="Selecione uma nova foto (opcional)" disabled>
+                </div>
+                <span asp-validation-for="Foto" class="uk-text-danger uk-text-small"></span>
+            </div>
+        </div>
+
+        <div class="uk-margin-top">
+            <button type="submit" class="uk-button uk-button-primary">Salvar alterações</button>
+            <a class="uk-button uk-button-default" asp-action="Index">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Mostra/esconde o campo de gestor conforme o perfil selecionado,
+        // mas a regra de negócio de verdade é validada no servidor, em UsuarioService.
+        $(function () {
+            function alternarCampoGestor() {
+                var isGestor = $('#perfilSelect').val() === '@nameof(PerfilUsuario.Gestor)';
+                $('#campoGestor').toggle(!isGestor);
+            }
+            alternarCampoGestor();
+            $('#perfilSelect').on('change', alternarCampoGestor);
+        });
+    </script>
+}
