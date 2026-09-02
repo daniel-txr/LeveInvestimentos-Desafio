@@ -11,4 +11,11 @@
     <ProjectReference Include="..\LeveInvestimentos.Domain\LeveInvestimentos.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Somente o pacote "Abstractions": a camada Application depende apenas do CONTRATO de
+         logging (ILogger<T>), nunca de uma implementação concreta (Serilog, console, etc.),
+         mantendo a inversão de dependência também aqui. -->
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
+  </ItemGroup>
+
 </Project>

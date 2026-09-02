@@ -1,4 +1,4 @@
-@model IEnumerable<LeveInvestimentos.Application.DTOs.UsuarioListaDTO>
+@model LeveInvestimentos.Application.DTOs.PaginacaoResultado<LeveInvestimentos.Application.DTOs.UsuarioListaDTO>
 @{
     ViewData["Title"] = "Usuários";
 }
@@ -10,7 +10,7 @@
     </a>
 </div>
 
-@if (!Model.Any())
+@if (!Model.Itens.Any())
 {
     <div class="uk-alert-primary" uk-alert><p>Nenhum usuário cadastrado ainda.</p></div>
 }
@@ -27,11 +27,11 @@ else
                     <th>Perfil</th>
                     <th>Gestor</th>
                     <th>Situação</th>
-                    <th></th>
+                    <th class="uk-text-right">Ações</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var usuario in Model)
+                @foreach (var usuario in Model.Itens)
                 {
                     <tr>
                         <td>
@@ -68,12 +68,36 @@ else
                                 <span class="uk-text-danger">Inativo</span>
                             }
                         </td>
-                        <td>
-                            <a class="uk-icon-link" uk-icon="icon: more" asp-action="Details" asp-route-id="@usuario.Id" title="Detalhes"></a>
+                        <td class="uk-text-right">
+                            <a class="uk-icon-link uk-margin-small-right" uk-icon="icon: more" asp-action="Details" asp-route-id="@usuario.Id" title="Detalhes"></a>
+                            <a class="uk-icon-link uk-margin-small-right" uk-icon="icon: pencil" asp-action="Edit" asp-route-id="@usuario.Id" title="Editar"></a>
+
+                            @if (usuario.Ativo)
+                            {
+                                <form asp-action="Excluir" asp-route-id="@usuario.Id" asp-route-pagina="@Model.PaginaAtual" method="post" class="uk-display-inline">
+                                    <button type="submit" class="uk-icon-link uk-text-danger" uk-icon="icon: trash" title="Inativar"
+                                            onclick="return confirm('Inativar @usuario.NomeCompleto? Ele deixará de aparecer nas listas de seleção, mas o histórico de tarefas é preservado.');"></button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form asp-action="Reativar" asp-route-id="@usuario.Id" asp-route-pagina="@Model.PaginaAtual" method="post" class="uk-display-inline">
+                                    <button type="submit" class="uk-icon-link uk-text-success" uk-icon="icon: refresh" title="Reativar"></button>
+                                </form>
+                            }
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
+
+    <p class="uk-text-meta uk-text-center">
+        Mostrando @Model.Itens.Count() de @Model.TotalRegistros usuário(s) — página @Model.PaginaAtual de @Model.TotalPaginas
+    </p>
+
+    ViewData["PaginaAtual"] = Model.PaginaAtual;
+    ViewData["TotalPaginas"] = Model.TotalPaginas;
+    
+    <partial name="_Paginacao" />
 }

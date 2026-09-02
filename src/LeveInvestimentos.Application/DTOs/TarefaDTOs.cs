@@ -33,3 +33,26 @@ public class TarefaListaDTO
     public string UsuarioResponsavelNome { get; set; } = string.Empty;
     public string UsuarioGestorNome { get; set; } = string.Empty;
 }
+
+/// <summary>
+/// Dados de entrada para o gestor editar uma tarefa que ele mesmo criou.
+/// Só é permitido editar tarefas ainda não concluídas (ver TarefaService.EditarAsync).
+/// </summary>
+public class TarefaEdicaoDTO
+{
+    public int Id { get; set; }
+
+    [Required(ErrorMessage = "Selecione o responsável pela tarefa.")]
+    [Display(Name = "Subordinado responsável")]
+    public int UsuarioResponsavelId { get; set; }
+
+    [Required(ErrorMessage = "Informe a mensagem descritiva da tarefa.")]
+    [StringLength(1000, ErrorMessage = "A mensagem deve ter no máximo {1} caracteres.")]
+    [Display(Name = "Mensagem")]
+    public string Mensagem { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Informe a data limite.")]
+    [DataType(DataType.Date)]
+    [Display(Name = "Data limite")]
+    public DateTime DataLimite { get; set; }
+}

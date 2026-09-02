@@ -20,4 +20,11 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Serilog: substitui o provedor de log padrão (só console) por um que também grava em
+         arquivo, com rotação diária. Configurado inteiramente via appsettings.json (seção "Serilog"). -->
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+  </ItemGroup>
+
 </Project>

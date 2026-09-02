@@ -165,6 +165,20 @@ Criado automaticamente na primeira execução da aplicação (idempotente — n�
 > Em um ambiente produtivo, recomenda-se forçar a troca dessa senha no primeiro acesso — ponto
 > de evolução natural, listado em [Possíveis evoluções](#possíveis-evoluções).
 
+## Logs
+
+A aplicação usa **Serilog**, gravando em dois destinos simultaneamente:
+
+- **Console**: útil durante o desenvolvimento (`dotnet run`).
+- **Arquivo**: `src/LeveInvestimentos.Web/Logs/log-AAAAMMDD.txt`, com um arquivo novo por dia
+  (rotação diária) e retenção dos últimos 14 dias. A pasta `Logs/` é criada automaticamente na primeira execução.
+
+Isso inclui, por exemplo, falhas no envio de e-mail de notificação (nível `Warning`, com a
+exceção original) e falhas inesperadas durante o startup da aplicação (nível `Fatal`).
+
+Os níveis mínimos de log são configuráveis na seção `Serilog` do `appsettings.json` /
+`appsettings.Development.json`, sem necessidade de alterar código.
+
 ## Configuração de e-mail
 
 Por padrão, `EmailSettings:ModoSimulado` está `true` em `appsettings.json`: os e-mails não são
@@ -208,10 +222,9 @@ LeveInvestimentos-Desafio/
 Fora do escopo desta primeira entrega, mas mapeadas para as próximas demandas do contrato (por ordem de prioridade/complexidade):
 
 - Política de expiração/força de senha e forçar alteração de senha do usuário padrão.
-- Criação de arquivo de log para acompanhamento e debugging de erros no envio de e-mails.
-- Edição e remoção de usuários e reatribuição de gestor.
-- Paginação e filtros nas listagens de usuários e tarefas.
-- Perfil master para gerenciamento de gestores e equipes.
+- Máscara nos campos de telefone e validação da mesma.
+- Filtros nas listagens de usuários e tarefas.
+- Perfil master para gerenciamento geral.
 - Job em background para marcar tarefas como atrasadas automaticamente.
 - Testes automatizados para a camada `Application`, que já foi desenhada sem dependências
   de infraestrutura justamente para facilitar isso.

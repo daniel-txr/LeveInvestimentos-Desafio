@@ -82,3 +82,52 @@ public class UsuarioListaDTO
     public bool Ativo { get; set; }
     public string? NomeGestor { get; set; }
 }
+
+/// <summary>
+/// Dados de entrada para edição de um usuário já existente (gestor logado altera os
+/// dados cadastrais e, no caso de subordinados, pode reatribuir o gestor responsável).
+/// Não inclui senha — troca de senha é um fluxo separado, fora do escopo desta entrega.
+/// </summary>
+public class UsuarioEdicaoDTO
+{
+    public int Id { get; set; }
+
+    [Required(ErrorMessage = "Informe o nome completo.")]
+    [StringLength(200, ErrorMessage = "O nome deve ter no máximo {1} caracteres.")]
+    [Display(Name = "Nome completo")]
+    public string NomeCompleto { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Informe a data de nascimento.")]
+    [DataType(DataType.Date)]
+    [Display(Name = "Data de nascimento")]
+    public DateTime DataNascimento { get; set; }
+
+    [Phone(ErrorMessage = "Telefone fixo inválido.")]
+    [Display(Name = "Telefone fixo")]
+    public string? TelefoneFixo { get; set; }
+
+    [Required(ErrorMessage = "Informe o telefone celular.")]
+    [Phone(ErrorMessage = "Telefone celular inválido.")]
+    [Display(Name = "Telefone celular")]
+    public string TelefoneCelular { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Informe o e-mail.")]
+    [EmailAddress(ErrorMessage = "E-mail inválido.")]
+    [Display(Name = "E-mail")]
+    public string Email { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Informe o endereço.")]
+    [StringLength(300)]
+    [Display(Name = "Endereço")]
+    public string Endereco { get; set; } = string.Empty;
+
+    [Display(Name = "Perfil")]
+    public PerfilUsuario Perfil { get; set; }
+
+    /// <summary>Novo gestor responsável. Obrigatório quando Perfil = Subordinado; ignorado quando Perfil = Gestor.</summary>
+    [Display(Name = "Gestor responsável")]
+    public int? GestorId { get; set; }
+
+    /// <summary>Caminho da nova foto, já salva pela camada Web (null = manter a foto atual).</summary>
+    public string? CaminhoFoto { get; set; }
+}

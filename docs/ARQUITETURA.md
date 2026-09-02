@@ -87,7 +87,7 @@ ausência de pacotes de EF Core/ASP.NET Core no `Domain`/`Application`.
 
 - **UIkit 3** via CDN como padrão visual (grid, cards, formulários, alerts, badges), sem a
   necessidade de um pipeline de build de front-end (webpack/vite) — mantém o projeto simples de
-  rodar em qualquer máquina, alinhado ao conjunto de tecnologias já dominado pela equipe.
+  rodar em qualquer máquina.
 
 - **jQuery + jQuery Validation Unobtrusive** para validação client-side integrada nativamente com
   as Data Annotations do ASP.NET Core (`asp-validation-for`), evitando duplicar regras de
